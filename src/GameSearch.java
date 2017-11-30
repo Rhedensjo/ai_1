@@ -33,11 +33,11 @@ public class GameSearch
     }*/
 
     public void setTime(int limit){
-        timeLimit = limit;
+        this.timeLimit = limit;
     }
 
-    public int getTime(){
-        return timeLimit;
+    private int convertTime(){
+        return this.timeLimit * 1000;
     }
 
     /*public GameSearch() {
@@ -63,6 +63,7 @@ public class GameSearch
     private void copy(OthelloAction action){
         copyAction.setRow(action.getRow());
         copyAction.setColumn(action.getColumn());
+        copyAction.setValue(action.getValue());
     }
 
     /**
@@ -76,11 +77,6 @@ public class GameSearch
         this.searchDepth = depth;
     }
 
-   /* public OthelloAction evaluate(OthelloPosition pos){
-        evaluator.evaluate(pos);
-
-    }*/
-
 
     /**
      * Returns the <code>OthelloAction</code> the algorithm considers to be the
@@ -93,8 +89,10 @@ public class GameSearch
     Implements an IterativeDeepening search
      */
     public OthelloAction evaluate(OthelloPosition pos){
+        int time = convertTime();
+
         long startTime = System.currentTimeMillis();
-        long endTime = startTime + timeLimit;
+        long endTime = startTime + time;
         int depth = 1;
         int value = 0;
         int searchResult;
@@ -105,8 +103,17 @@ public class GameSearch
         OthelloAction action;
         OthelloPosition move = pos.clone();
 
+        /*System.out.println("timeLimit: " + timeLimit);
+        System.out.println("timeLimitConvert: " + convertTime());
+
+        System.out.println("Init function evaluate(pos)...");*/
+
         while (search){
             long currentTime = System.currentTimeMillis();
+
+            /*System.out.println("startTime: " + startTime +
+            "\nendTime: " + endTime +
+            "\ncurrentTime: " + currentTime);*/
 
             if (currentTime >= endTime){
                 search = false;
@@ -114,9 +121,20 @@ public class GameSearch
             }
 
             for (int i = 0; i < posMoves.size(); i++){
+                //System.out.println("Inside for-loop....");
                 action = new OthelloAction(posMoves.get(i));
-                move = pos.makeMove(action);
+                try {
+                    move = pos.makeMove(action);
+                    //System.out.println("Trying move...");
+                }catch (IllegalMoveException e){
+                    System.out.println("Illegal move was made. Ending game...");
+                    System.exit(-1);
+                }
                 searchResult = AlphaBeta(move, depth);
+                //System.out.println(searchResult);
+                /**
+                 * Problem with searchResult. Always returns posInfinity
+                 */
                 if (searchResult > value){
                     copy(action);
                     value = searchResult;
@@ -140,7 +158,7 @@ public class GameSearch
     public int MaxValue(OthelloPosition pos, int alpha, int beta, int currentDepth) {
 
         LinkedList<String> poses = pos.getMoves();
-        OthelloPosition child;
+        OthelloPosition child = null;
         OthelloAction a;
 
         //Not sure about the way to set a search depth. Gonna implement iterative deepening
@@ -151,7 +169,12 @@ public class GameSearch
         //In case there is only one placeable position. Might be unnecessary.
         if (poses.size() == 1){
             a = new OthelloAction(poses.getFirst());
-            pos.makeMove(a);
+            try {
+                pos.makeMove(a);
+            }catch (IllegalMoveException e){
+                System.out.println("Illegal move was made. Ending game...");
+                System.exit(-1);
+            }
             return a.getValue();
         }
 
@@ -160,7 +183,12 @@ public class GameSearch
         int value = NegInfty;
         for (int i = 0; i < poses.size(); i++){
             a = new OthelloAction(poses.get(i));
-            child = pos.makeMove(a);
+            try {
+                child = pos.makeMove(a);
+            }catch (IllegalMoveException e){
+                System.out.println("Illegal move was made. Ending game...");
+                System.exit(-1);
+            }
             value = Integer.max(value, MinValue(child, alpha, beta, currentDepth));
             if (value >= beta){
                 return value;
@@ -175,7 +203,7 @@ public class GameSearch
     public int MinValue(OthelloPosition pos, int alpha, int beta, int currentDepth) {
 
         LinkedList<String> poses = pos.getMoves();
-        OthelloPosition child;
+        OthelloPosition child = null;
         OthelloAction a;
 
         //Not sure about the way to set a search depth. Gonna implement iterative deepening
@@ -187,7 +215,12 @@ public class GameSearch
         //In case there is only one placeable position. Might be unnecessary.
         if (poses.size() == 1){
             a = new OthelloAction(poses.getFirst());
-            pos.makeMove(a);
+            try {
+                pos.makeMove(a);
+            }catch (IllegalMoveException e){
+                System.out.println("Illegal move was made. Ending game...");
+                System.exit(-1);
+            }
             return a.getValue();
         }
 
@@ -196,7 +229,12 @@ public class GameSearch
         int value = PosInfty;
         for (int i = 0; i < poses.size(); i++){
             a = new OthelloAction(poses.get(i));
-            child = pos.makeMove(a);
+            try {
+                child = pos.makeMove(a);
+            }catch (IllegalMoveException e){
+                System.out.println("Illegal move was made. Ending game...");
+                System.exit(-1);
+            }
             value = Integer.min(value, MinValue(child, alpha, beta, currentDepth));
             if (value <= beta){
                 return value;

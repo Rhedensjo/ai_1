@@ -5,18 +5,22 @@ public class myOthello {
     public myOthello() {
     }
 
-    public static void main(String [] args){
-        String var1;
-        if(args.length > 0) {
-            var1 = args[0];
-        } else {
-            var1 = "WEEEEEEEEEEEEEEEEEEEEEEEEEEEOXEEEEEEXOEEEEEEEEEEEEEEEEEEEEEEEEEEE";
+    public static void main(String[] args){
+
+        if (args.length != 2){
+            System.out.println("Wrong number of arguments, try again!");
+            System.exit(-1);
+        }
+        if (args[0].length() != 65) {
+            System.out.println("Invalid length of board string. Try again.");
+            System.exit(-1);
         }
 
-        OthelloPosition pos = new OthelloPosition(var1);
+
+        OthelloPosition pos = new OthelloPosition(args[0]);
 
         GameSearch game = new GameSearch();
-        String time = args[3];
+        String time = args[1];
         game.setTime(Integer.valueOf(time));
 
         OthelloAction eval = game.evaluate(pos);

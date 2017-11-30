@@ -123,7 +123,7 @@ public class OthelloPosition {
 	 * move next.
 	 */
 	public OthelloPosition makeMove(OthelloAction action)
-				/*throws IllegalMoveException */{
+				throws IllegalMoveException {
 
 		OthelloPosition move = clone();
 		int[] pos = new int[2];
