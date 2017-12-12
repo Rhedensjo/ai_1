@@ -1,4 +1,5 @@
 import java.util.LinkedList;
+import java.lang.Math;
 
 /**
  * Created by Rasmus on 06-Nov-17.
@@ -98,8 +99,13 @@ public class GameSearch
         int searchResult;
         boolean search = true;
         this.searchDepth = 0;
+        OthelloPosition new_board;
 
-        LinkedList<String> posMoves = pos.getMoves();
+        LinkedList<String> posMoves;
+
+        LinkedList<OthelloPosition> storedBoards = new LinkedList<>();
+        storedBoards.add(pos);
+
         OthelloAction action;
         OthelloPosition move = pos.clone();
 
@@ -115,9 +121,15 @@ public class GameSearch
             "\nendTime: " + endTime +
             "\ncurrentTime: " + currentTime);*/
 
-            if (currentTime >= endTime){
+            if (currentTime + 0.5 >= endTime){
                 search = false;
                 break;
+            }
+
+            posMoves = storedBoards.get(0).getMoves();
+
+            for (int j = 0; j < storedBoards.size(); j++){
+
             }
 
             for (int i = 0; i < posMoves.size(); i++){
@@ -131,7 +143,7 @@ public class GameSearch
                     System.exit(-1);
                 }
                 searchResult = AlphaBeta(move, depth);
-                //System.out.println(searchResult);
+                System.out.println(searchResult);
                 /**
                  * Problem with searchResult. Always returns posInfinity
                  */
@@ -139,9 +151,16 @@ public class GameSearch
                     copy(action);
                     value = searchResult;
                 }
+                storedBoards.add(move);
             }
 
             depth++;
+
+
+
+            if (depth == 3){
+                break;
+            }
         }
 
         return this.copyAction;
@@ -151,11 +170,11 @@ public class GameSearch
         setSearchDepth(searchDepth);
         int startDepth = 0;
 
-        return MaxValue(pos, PosInfty, NegInfty, startDepth);
+        return ValMax(pos, PosInfty, NegInfty, startDepth);
 
     }
 
-    public int MaxValue(OthelloPosition pos, int alpha, int beta, int currentDepth) {
+    public int ValMax(OthelloPosition pos, int alpha, int beta, int currentDepth) {
 
         LinkedList<String> poses = pos.getMoves();
         OthelloPosition child = null;
@@ -189,18 +208,18 @@ public class GameSearch
                 System.out.println("Illegal move was made. Ending game...");
                 System.exit(-1);
             }
-            value = Integer.max(value, MinValue(child, alpha, beta, currentDepth));
+            value = Math.max(value, ValMin(child, alpha, beta, currentDepth));
             if (value >= beta){
                 return value;
             }
-            alpha = Integer.max(alpha, value);
+            alpha = Math.max(alpha, value);
 
 
         }
         return value;
     }
 
-    public int MinValue(OthelloPosition pos, int alpha, int beta, int currentDepth) {
+    public int ValMin(OthelloPosition pos, int alpha, int beta, int currentDepth) {
 
         LinkedList<String> poses = pos.getMoves();
         OthelloPosition child = null;
@@ -235,11 +254,11 @@ public class GameSearch
                 System.out.println("Illegal move was made. Ending game...");
                 System.exit(-1);
             }
-            value = Integer.min(value, MinValue(child, alpha, beta, currentDepth));
+            value = Math.min(value, ValMax(child, alpha, beta, currentDepth));
             if (value <= beta){
                 return value;
             }
-            alpha = Integer.max(beta, value);
+            alpha = Math.max(beta, value);
         }
         return value;
     }

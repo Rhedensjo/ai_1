@@ -138,6 +138,7 @@ public class OthelloPosition {
 			return null;
 		}
 	}
+	
 
 	/**
 	 * Returns a new <code>OthelloPosition</code>, identical to the current one.
