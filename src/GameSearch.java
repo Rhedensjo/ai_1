@@ -126,7 +126,9 @@ public class GameSearch
                 break;
             }
 
-            posMoves = storedBoards.get(0).getMoves();
+            posMoves = storedBoards.getFirst().getMoves();
+            storedBoards.removeFirst();
+            System.out.println(storedBoards.size());
 
             for (int j = 0; j < storedBoards.size(); j++){
 
@@ -156,9 +158,13 @@ public class GameSearch
 
             depth++;
 
+            for (int k = 0; k < storedBoards.size(); k++){
+                storedBoards.get(k).illustrate();
+            }
 
 
-            if (depth == 3){
+
+            if (depth == 4){
                 break;
             }
         }
